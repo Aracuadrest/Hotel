@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
@@ -17,9 +19,11 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
 
 public class FormularioHotel extends JFrame {
 
@@ -29,6 +33,13 @@ public class FormularioHotel extends JFrame {
 	private JTextField txtDni;
 	private final ButtonGroup GrupoRegimen = new ButtonGroup();
 	private JComboBox comboBoxHabitacion;
+	private JRadioButton rdbtnPensionCompleta;
+	private JRadioButton rdbtnDesayuno;
+	private JRadioButton rdbtnMediaPension;
+	private JRadioButton rdbtnTodo;
+	private JSpinner spinnerNumNoches;
+	private JTextArea txtAreaResumen;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -51,11 +62,11 @@ public class FormularioHotel extends JFrame {
 	 */
 	public FormularioHotel() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 419);
+		setBounds(100, 100, 450, 591);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][][][][grow]"));
+		contentPane.setLayout(new MigLayout("", "[grow][grow]", "[][][][][][][][40.00][][302.00,grow]"));
 		
 		JLabel lblNombre = new JLabel("Nombre:");
 		lblNombre.setFont(new Font("Verdana", Font.PLAIN, 14));
@@ -97,17 +108,18 @@ public class FormularioHotel extends JFrame {
 		lblRegimen.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(lblRegimen, "cell 0 4,alignx right");
 		
-		JRadioButton rdbtnDesayuno = new JRadioButton("Desayuno");
+		 rdbtnDesayuno = new JRadioButton("Desayuno");
+		rdbtnDesayuno.setSelected(true);
 		GrupoRegimen.add(rdbtnDesayuno);
 		rdbtnDesayuno.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(rdbtnDesayuno, "flowx,cell 1 4");
 		
-		JRadioButton rdbtnMediaPension = new JRadioButton("Media Pensi\u00F3n");
+		 rdbtnMediaPension = new JRadioButton("Media Pensi\u00F3n");
 		GrupoRegimen.add(rdbtnMediaPension);
 		rdbtnMediaPension.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(rdbtnMediaPension, "cell 1 4");
 		
-		JRadioButton rdbtnPensionCompleta = new JRadioButton("Pensi\u00F3n Completa");
+		 rdbtnPensionCompleta = new JRadioButton("Pensi\u00F3n Completa");
 		GrupoRegimen.add(rdbtnPensionCompleta);
 		rdbtnPensionCompleta.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(rdbtnPensionCompleta, "flowx,cell 1 5");
@@ -116,12 +128,12 @@ public class FormularioHotel extends JFrame {
 		lblNumNoches.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(lblNumNoches, "cell 0 6");
 		
-		JRadioButton rdbtnSuite = new JRadioButton("Suite Deluxe");
-		GrupoRegimen.add(rdbtnSuite);
-		rdbtnSuite.setFont(new Font("Verdana", Font.PLAIN, 14));
-		contentPane.add(rdbtnSuite, "cell 1 5");
+		 rdbtnTodo = new JRadioButton("Todo incluido");
+		GrupoRegimen.add(rdbtnTodo);
+		rdbtnTodo.setFont(new Font("Verdana", Font.PLAIN, 14));
+		contentPane.add(rdbtnTodo, "cell 1 5");
 		
-		JSpinner spinnerNumNoches = new JSpinner();
+		spinnerNumNoches = new JSpinner();
 		spinnerNumNoches.setModel(new SpinnerNumberModel(1, 1, 20, 1));
 		spinnerNumNoches.setFont(new Font("Verdana", Font.PLAIN, 14));
 		contentPane.add(spinnerNumNoches, "cell 1 6");
@@ -129,7 +141,7 @@ public class FormularioHotel extends JFrame {
 		JButton btnCalcular = new JButton("Calcular Importe");
 		btnCalcular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				calcularImporte();
+				validarYcalcular();
 			}
 		});
 		btnCalcular.setFont(new Font("Verdana", Font.PLAIN, 14));
@@ -137,24 +149,70 @@ public class FormularioHotel extends JFrame {
 		
 		JLabel lblResumen = new JLabel("Resumen:");
 		lblResumen.setFont(new Font("Verdana", Font.PLAIN, 14));
-		contentPane.add(lblResumen, "flowy,cell 1 8");
+		contentPane.add(lblResumen, "cell 0 8,alignx right");
+		 
+		 scrollPane = new JScrollPane();
+		 contentPane.add(scrollPane, "cell 0 9 2 1,grow");
 		
-		JTextArea textArea = new JTextArea();
-		contentPane.add(textArea, "cell 1 8,grow");
+		 txtAreaResumen = new JTextArea();
+		 scrollPane.setViewportView(txtAreaResumen);
 	}
 
-	protected void calcularImporte() {
+	protected void validarYcalcular() {
+		
+		if (txtNombre.getText()==null || txtNombre.getText().isBlank() ||
+				txtApellidos.getText()==null || txtApellidos.getText().isBlank() ||
+				txtDni.getText()==null || txtDni.getText().isBlank()) {
+			JOptionPane.showMessageDialog(this, "Debe introducir los campos de nombre, apellidos y DNI.", 
+					"Compruebe los datos", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		
 		String nombre = txtNombre.getText();
 		String apellidos = txtApellidos.getText();
 		String dni = txtDni.getText();
-		String habitacion = comboBoxHabitacion.getName();
-		//String regimen = GrupoRegimen.
-				
+		String tipo = (String) comboBoxHabitacion.getSelectedItem();
+		String regimen = "Desayuno";
+		int precio =60;
 		
+		if (tipo.equals("Doble")) {
+			precio=85;
+		}else if (tipo.equals("Triple")) {
+			precio=102;
+		}else if (tipo.equals("Suit Deluxe")) {
+			precio=350;
+		}
+		if (rdbtnDesayuno.isSelected()) {
+			precio=precio+3;
+		}
+		if (rdbtnMediaPension.isSelected()) {
+			regimen="Media Pensión";
+			precio=precio+5;
+		}
+		if (rdbtnPensionCompleta.isSelected()) {
+			regimen="Pensión Completa";
+			precio=precio+7;
+		}
+		if (rdbtnTodo.isSelected()) {
+			regimen="Todo Incluido";
+			precio=precio+16;
+		}
+		int noches = (int) spinnerNumNoches.getValue();
 		
+		precio = precio*noches;
 		
+		txtAreaResumen.setText(
+				"Nombre: "+nombre+ "\n"+
+				"Apellidos: "+apellidos+ "\n"+
+				"Dni: "+dni+ "\n"+
+				"Habitación: "+tipo+ "\n"+
+				"Régimen: "+regimen+ "\n"+
+				"Num Noches: "+noches+ "\n"+
+				"Total: "+precio);
+	
+		}
+	
 		
 	}
 
-}
+
